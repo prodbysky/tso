@@ -1,0 +1,7 @@
+[package]
+name = "tso"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lalrpop = "0.22.1"
