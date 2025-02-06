@@ -1,26 +1,53 @@
 use std::str::FromStr;
 
-use crate::ast::{BinaryOperator, Expression};
+use crate::ast;
 
 grammar;
 
-pub Expression: Expression = {
-   <l:Expression> "+" <r:Term> => Expression::BinaryExpression{left: Box::new(l), operator: BinaryOperator::Plus, right: Box::new(r)},
-   <l:Expression> "-" <r:Term> => Expression::BinaryExpression{left: Box::new(l), operator: BinaryOperator::Minus, right: Box::new(r)},
+pub Program = Semicolon<Statement>;
+
+Statement: ast::Statement = {
+    "exit" "(" <e: Expression?> ")" => ast::Statement::Exit(e.unwrap_or(ast::Expression::Number(0)))
+}
+
+Expression: ast::Expression = {
+   <l:Expression> "+" <r:Term> => ast::Expression::BinaryExpression{left: Box::new(l), operator: ast::BinaryOperator::Plus, right: Box::new(r)},
+   <l:Expression> "-" <r:Term> => ast::Expression::BinaryExpression{left: Box::new(l), operator: ast::BinaryOperator::Minus, right: Box::new(r)},
    Term => <>
 }
 
-Term: Expression = {
-    <l:Term> "*" <r:Factor> => Expression::BinaryExpression{left: Box::new(l), operator: BinaryOperator::Mul, right: Box::new(r)},
-    <l:Term> "/" <r:Factor> => Expression::BinaryExpression{left: Box::new(l), operator: BinaryOperator::Div, right: Box::new(r)},
+Term: ast::Expression = {
+    <l:Term> "*" <r:Factor> => ast::Expression::BinaryExpression{left: Box::new(l), operator: ast::BinaryOperator::Mul, right: Box::new(r)},
+    <l:Term> "/" <r:Factor> => ast::Expression::BinaryExpression{left: Box::new(l), operator: ast::BinaryOperator::Div, right: Box::new(r)},
     Factor => <>
 }
 
-Factor: Expression = {
+Factor: ast::Expression = {
     "(" <e:Expression> ")" => <>,
-    Number => Expression::Number(<>)
+    Number => ast::Expression::Number(<>)
 }
 
 Number: i32 = {
     <n:r"[0-9]+"> => i32::from_str(n).unwrap()
 }
+
+// Taken from https://lalrpop.github.io/lalrpop/tutorial/006_macros.html
+Comma<T>: Vec<T> = {
+    <mut v:(<T> ",")*> <e:T?> => match e {
+        None => v,
+        Some(e) => {
+            v.push(e);
+            v
+        }
+    }
+};
+
+Semicolon<T>: Vec<T> = {
+    <mut v:(<T> ";")*> <e:T?> => match e {
+        None => v,
+        Some(e) => {
+            v.push(e);
+            v
+        }
+    }
+};

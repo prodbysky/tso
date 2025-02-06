@@ -5,5 +5,6 @@ use lalrpop_util::lalrpop_mod;
 lalrpop_mod!(grammar);
 
 fn main() {
-    dbg!(grammar::ExpressionParser::new().parse("123 + 9").unwrap());
+    let src = "exit(123);";
+    dbg!(grammar::ProgramParser::new().parse(src).unwrap());
 }

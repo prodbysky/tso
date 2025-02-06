@@ -15,3 +15,10 @@ pub enum BinaryOperator {
     Div,
     Mul,
 }
+
+pub type Program = Vec<Statement>;
+
+#[derive(Debug)]
+pub enum Statement {
+    Exit(Expression),
+}
