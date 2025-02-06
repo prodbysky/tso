@@ -2,6 +2,7 @@ mod ast;
 
 use lalrpop_util::lalrpop_mod;
 use std::collections::HashMap;
+use std::fmt::Write;
 
 lalrpop_mod!(grammar);
 
@@ -9,6 +10,20 @@ fn main() {
     let src = "let x = 10; exit(x);";
     let program = grammar::ProgramParser::new().parse(src).unwrap();
     println!("Program quit with: {}", interpret(&program));
+    let python = transpile_to_python(&program);
+    std::fs::write("transpiled.py", python).unwrap();
+}
+
+fn transpile_to_python(program: &[ast::Statement]) -> String {
+    let mut code = String::new();
+
+    for stmt in program {
+        match stmt {
+            ast::Statement::Exit(v) => writeln!(code, "exit({})", v).unwrap(),
+            ast::Statement::Let { name, value } => writeln!(code, "{} = {}", name, value).unwrap(),
+        }
+    }
+    code
 }
 
 fn interpret(program: &[ast::Statement]) -> i32 {
@@ -51,4 +66,31 @@ fn interpret(program: &[ast::Statement]) -> i32 {
         }
     }
     0
+}
+
+impl std::fmt::Display for ast::Expression {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ast::Expression::Number(v) => write!(f, "{}", v),
+            ast::Expression::Identifier(ident) => write!(f, "{}", ident),
+            ast::Expression::BinaryExpression {
+                left,
+                operator,
+                right,
+            } => match operator {
+                ast::BinaryOperator::Plus => {
+                    write!(f, "{} + {}", left, right)
+                }
+                ast::BinaryOperator::Minus => {
+                    write!(f, "{} - {}", left, right)
+                }
+                ast::BinaryOperator::Mul => {
+                    write!(f, "{} * {}", left, right)
+                }
+                ast::BinaryOperator::Div => {
+                    write!(f, "{} / {}", left, right)
+                }
+            },
+        }
+    }
 }
