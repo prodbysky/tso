@@ -7,13 +7,22 @@ grammar;
 pub Program = Semicolon<Statement>;
 
 Statement: ast::Statement = {
-    "exit" "(" <e: Expression?> ")" => ast::Statement::Exit(e.unwrap_or(ast::Expression::Number(0)))
+    "exit" "(" <e: Expression?> ")" => ast::Statement::Exit(e.unwrap_or(ast::Expression::Number(0))),
+    "let" <name:Identifier> "=" <e: Expression> => ast::Statement::Let {
+        name,
+        value: e
+    }
 }
 
 Expression: ast::Expression = {
+    BinaryExpression => <>,
+}
+
+BinaryExpression: ast::Expression = {
    <l:Expression> "+" <r:Term> => ast::Expression::BinaryExpression{left: Box::new(l), operator: ast::BinaryOperator::Plus, right: Box::new(r)},
    <l:Expression> "-" <r:Term> => ast::Expression::BinaryExpression{left: Box::new(l), operator: ast::BinaryOperator::Minus, right: Box::new(r)},
    Term => <>
+
 }
 
 Term: ast::Expression = {
@@ -24,12 +33,13 @@ Term: ast::Expression = {
 
 Factor: ast::Expression = {
     "(" <e:Expression> ")" => <>,
-    Number => ast::Expression::Number(<>)
+    Number => ast::Expression::Number(<>),
+    Identifier => ast::Expression::Identifier(<>),
 }
 
-Number: i32 = {
-    <n:r"[0-9]+"> => i32::from_str(n).unwrap()
-}
+Number: i32 = r"[0-9]+" => i32::from_str(<>).unwrap();
+Identifier: String = r"[a-zA-Z_]+[a-zA-Z0-9_]*" => String::from(<>);
+
 
 // Taken from https://lalrpop.github.io/lalrpop/tutorial/006_macros.html
 Comma<T>: Vec<T> = {

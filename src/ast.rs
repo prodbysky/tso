@@ -1,6 +1,7 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expression {
     Number(i32),
+    Identifier(String),
     BinaryExpression {
         left: Box<Expression>,
         operator: BinaryOperator,
@@ -8,7 +9,7 @@ pub enum Expression {
     },
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BinaryOperator {
     Plus,
     Minus,
@@ -18,7 +19,8 @@ pub enum BinaryOperator {
 
 pub type Program = Vec<Statement>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Statement {
     Exit(Expression),
+    Let { name: String, value: Expression },
 }
