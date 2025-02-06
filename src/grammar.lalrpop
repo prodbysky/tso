@@ -1,0 +1,26 @@
+use std::str::FromStr;
+
+use crate::ast::{BinaryOperator, Expression};
+
+grammar;
+
+pub Expression: Expression = {
+   <l:Expression> "+" <r:Term> => Expression::BinaryExpression{left: Box::new(l), operator: BinaryOperator::Plus, right: Box::new(r)},
+   <l:Expression> "-" <r:Term> => Expression::BinaryExpression{left: Box::new(l), operator: BinaryOperator::Minus, right: Box::new(r)},
+   Term => <>
+}
+
+Term: Expression = {
+    <l:Term> "*" <r:Factor> => Expression::BinaryExpression{left: Box::new(l), operator: BinaryOperator::Mul, right: Box::new(r)},
+    <l:Term> "/" <r:Factor> => Expression::BinaryExpression{left: Box::new(l), operator: BinaryOperator::Div, right: Box::new(r)},
+    Factor => <>
+}
+
+Factor: Expression = {
+    "(" <e:Expression> ")" => <>,
+    Number => Expression::Number(<>)
+}
+
+Number: i32 = {
+    <n:r"[0-9]+"> => i32::from_str(n).unwrap()
+}
