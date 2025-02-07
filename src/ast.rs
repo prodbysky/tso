@@ -22,15 +22,8 @@ pub type Program = Vec<Statement>;
 #[derive(Debug, Clone)]
 pub enum Statement {
     Exit(Expression),
-    Let {
-        name: String,
-        t: String,
-        value: Expression,
-    },
-    Assign {
-        name: String,
-        value: Expression,
-    },
+    Let { name: String, value: Expression },
+    Assign { name: String, value: Expression },
 }
 
 impl std::fmt::Display for Expression {

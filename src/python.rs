@@ -7,7 +7,7 @@ pub fn transpile_to_python(program: &[ast::Statement]) -> Result<String, std::fm
     for stmt in program {
         match stmt {
             ast::Statement::Exit(v) => writeln!(code, "exit({})", v)?,
-            ast::Statement::Let { name, t, value } => writeln!(code, "{} = {}", name, value)?,
+            ast::Statement::Let { name, value } => writeln!(code, "{} = {}", name, value)?,
             ast::Statement::Assign { name, value } => writeln!(code, "{} = {}", name, value)?,
         }
     }

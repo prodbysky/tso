@@ -35,7 +35,7 @@ impl Interpreter {
     ) -> InterpretationResult<Option<i32>> {
         match stmt {
             ast::Statement::Exit(v) => return Ok(Some(self.evaluate_expression(v)?)),
-            ast::Statement::Let { name, t, value } => {
+            ast::Statement::Let { name, value } => {
                 self.vars.insert(name.to_string(), value.clone());
             }
             ast::Statement::Assign { name, value } => {

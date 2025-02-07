@@ -8,9 +8,8 @@ pub Program = Semicolon<Statement>;
 
 Statement: ast::Statement = {
     "exit" "(" <e: Expression?> ")" => ast::Statement::Exit(e.unwrap_or(ast::Expression::Number(0))),
-    "let" <name:Identifier> ":" <t:Identifier> "=" <e: Expression> => ast::Statement::Let {
+    "let" <name:Identifier> "=" <e: Expression> => ast::Statement::Let {
         name,
-        t,
         value: e
     },
     <name:Identifier> "=" <e:Expression> => ast::Statement::Assign {
