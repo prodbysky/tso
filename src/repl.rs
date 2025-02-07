@@ -1,5 +1,4 @@
 use crate::{grammar, interpreter};
-use std::collections::HashMap;
 
 pub fn repl() {
     let config = rustyline::Config::builder()
@@ -15,7 +14,7 @@ pub fn repl() {
             return;
         }
     };
-    let mut vars = HashMap::new();
+    let mut interpreter = interpreter::Interpreter::new();
 
     let stmt_parser = grammar::ProgramParser::new();
 
@@ -24,7 +23,7 @@ pub fn repl() {
         match line {
             Ok(line) => match line.as_str() {
                 ".exit" => return,
-                ".state" => println!("{:#?}", vars),
+                ".state" => println!("{:#?}", interpreter.state()),
                 ".help" => {
                     println!("Tso repl help");
                     println!("  .exit - quit the repl");
@@ -35,7 +34,7 @@ pub fn repl() {
                     match stmt_parser.parse(&line) {
                         Ok(stmt) => {
                             for st in stmt {
-                                match interpreter::interpret_single_statement(&st, &mut vars) {
+                                match interpreter.interpret_single_statement(&st) {
                                     Err(e) => println!("An interpretation error occured: {e:?}"),
                                     Ok(_) => {}
                                 }

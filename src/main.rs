@@ -21,7 +21,8 @@ fn main() {
         }
         (cli_config::Mode::Interpret, Some(input), _) => {
             let program = grammar::ProgramParser::new().parse(input).unwrap();
-            match interpreter::interpret(&program) {
+            let mut interpreter = interpreter::Interpreter::new();
+            match interpreter.interpret(&program) {
                 Ok(exit_code) => println!("Program quit succesfully with: {exit_code}"),
                 Err(e) => println!("An error occured during interpretation: {e:?}"),
             }
