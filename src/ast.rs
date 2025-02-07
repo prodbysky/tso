@@ -25,3 +25,30 @@ pub enum Statement {
     Let { name: String, value: Expression },
     Assign { name: String, value: Expression },
 }
+
+impl std::fmt::Display for Expression {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Expression::Number(v) => write!(f, "{}", v),
+            Expression::Identifier(ident) => write!(f, "{}", ident),
+            Expression::BinaryExpression {
+                left,
+                operator,
+                right,
+            } => match operator {
+                BinaryOperator::Plus => {
+                    write!(f, "{} + {}", left, right)
+                }
+                BinaryOperator::Minus => {
+                    write!(f, "{} - {}", left, right)
+                }
+                BinaryOperator::Mul => {
+                    write!(f, "{} * {}", left, right)
+                }
+                BinaryOperator::Div => {
+                    write!(f, "{} / {}", left, right)
+                }
+            },
+        }
+    }
+}
