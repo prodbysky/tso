@@ -11,3 +11,5 @@
     2025-02-07:
         - Assignment statement
         - Proper error reporting
+        - Command line arguments with `clap`
+        - Repl with `rustyline`
