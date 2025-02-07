@@ -19,7 +19,7 @@ fn main() {
             let program = grammar::ProgramParser::new().parse(&input).unwrap();
             std::fs::write(
                 config.output().unwrap(),
-                python::transpile_to_python(&program),
+                python::transpile_to_python(&program).unwrap(),
             )
             .unwrap()
         }

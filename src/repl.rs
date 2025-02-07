@@ -8,7 +8,13 @@ pub fn repl() {
         .indent_size(4)
         .completion_type(rustyline::CompletionType::Circular)
         .build();
-    let mut rl = rustyline::DefaultEditor::with_config(config).unwrap();
+    let mut rl = match rustyline::DefaultEditor::with_config(config) {
+        Ok(rl) => rl,
+        Err(e) => {
+            println!("Failed to initialize repl: {e:?}");
+            return;
+        }
+    };
     let mut vars = HashMap::new();
 
     let stmt_parser = grammar::ProgramParser::new();
@@ -19,6 +25,12 @@ pub fn repl() {
             Ok(line) => match line.as_str() {
                 ".exit" => return,
                 ".state" => println!("{:#?}", vars),
+                ".help" => {
+                    println!("Tso repl help");
+                    println!("  .exit - quit the repl");
+                    println!("  .state - print the current state of the repl");
+                    println!("  .help - print this help message");
+                }
                 _ => {
                     match stmt_parser.parse(&line) {
                         Ok(stmt) => {

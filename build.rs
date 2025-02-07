@@ -1,3 +1,9 @@
 fn main() {
-    lalrpop::process_root().unwrap()
+    match lalrpop::process_root() {
+        Ok(()) => {}
+        Err(e) => {
+            println!("Failed to do lalrpop build step due to: {e:?}");
+            panic!()
+        }
+    }
 }
