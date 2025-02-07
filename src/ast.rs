@@ -23,4 +23,5 @@ pub type Program = Vec<Statement>;
 pub enum Statement {
     Exit(Expression),
     Let { name: String, value: Expression },
+    Assign { name: String, value: Expression },
 }

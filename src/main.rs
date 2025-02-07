@@ -7,7 +7,7 @@ use std::fmt::Write;
 lalrpop_mod!(grammar);
 
 fn main() {
-    let src = "let x = 10; exit(x);";
+    let src = "let x = 10; x = 5 + 4; exit(x);";
     let program = grammar::ProgramParser::new().parse(src).unwrap();
     println!("Program quit with: {}", interpret(&program));
     let python = transpile_to_python(&program);
@@ -20,7 +20,9 @@ fn transpile_to_python(program: &[ast::Statement]) -> String {
     for stmt in program {
         match stmt {
             ast::Statement::Exit(v) => writeln!(code, "exit({})", v).unwrap(),
-            ast::Statement::Let { name, value } => writeln!(code, "{} = {}", name, value).unwrap(),
+            ast::Statement::Let { name, value } | ast::Statement::Assign { name, value } => {
+                writeln!(code, "{} = {}", name, value).unwrap()
+            }
         }
     }
     code
@@ -62,6 +64,11 @@ fn interpret(program: &[ast::Statement]) -> i32 {
             ast::Statement::Exit(v) => return eval_expression(v, &vars),
             ast::Statement::Let { name, value } => {
                 vars.insert(name.to_string(), value.clone());
+            }
+            ast::Statement::Assign { name, value } => {
+                if vars.contains_key(name) {
+                    vars.insert(name.to_string(), value.clone());
+                }
             }
         }
     }

@@ -11,6 +11,9 @@ Statement: ast::Statement = {
     "let" <name:Identifier> "=" <e: Expression> => ast::Statement::Let {
         name,
         value: e
+    },
+    <name:Identifier> "=" <e:Expression> => ast::Statement::Assign {
+        name, value: e
     }
 }
 
