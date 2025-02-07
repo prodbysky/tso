@@ -8,3 +8,6 @@
         - We have a single statement that can exist in our program for now
         - Yippie! Really hacked in variables
         - Added transpilation to python because why not?
+    2025-02-07:
+        - Assignment statement
+        - Proper error reporting
